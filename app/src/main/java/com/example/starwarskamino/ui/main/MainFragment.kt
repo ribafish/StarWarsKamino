@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.example.starwarskamino.databinding.MainFragmentBinding
 import com.example.starwarskamino.general.Result
 import com.squareup.picasso.Picasso
@@ -23,6 +24,8 @@ class MainFragment : Fragment() {
     }
 
     private lateinit var viewModel: MainViewModel
+
+    private var residentList : List<String>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -56,6 +59,10 @@ class MainFragment : Fragment() {
                     binding.rotationPeriod.text = result.data.rotationPeriod
                     binding.orbitalPeriod.text = result.data.orbitalPeriod
                     Picasso.get().load(result.data.imageUrl).into(binding.thumb)
+
+                    residentList = result.data.residents
+
+                    binding.textButton.visibility = View.VISIBLE
                 }
                 is Result.Error -> {
                     binding.swipeRefresh.isRefreshing = false
@@ -67,6 +74,13 @@ class MainFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.getKamino(true)
         }
+
+        binding.textButton.visibility = View.GONE
+        binding.textButton.setOnClickListener{ v ->
+            val action = MainFragmentDirections.actionMainFragmentToResidentListFragment(residentList?.toTypedArray() ?: emptyArray())
+            v.findNavController().navigate(action)
+        }
+
     }
 
 }
