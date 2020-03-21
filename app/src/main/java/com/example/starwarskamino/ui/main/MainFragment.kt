@@ -1,14 +1,18 @@
 package com.example.starwarskamino.ui.main
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.starwarskamino.R
+import androidx.lifecycle.ViewModelProvider
+import com.example.starwarskamino.databinding.MainFragmentBinding
 
 class MainFragment : Fragment() {
+
+    private var _binding: MainFragmentBinding? = null
+    // This property is only valid between onCreateView and onDestroyView.
+    private val binding get() = _binding!!
 
     companion object {
         fun newInstance() = MainFragment()
@@ -18,12 +22,18 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.main_fragment, container, false)
+        _binding = MainFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, MainViewModelFactory).get(MainViewModel::class.java)
         // TODO: Use the ViewModel
     }
 
