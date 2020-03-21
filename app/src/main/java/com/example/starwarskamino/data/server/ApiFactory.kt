@@ -24,7 +24,7 @@ object ApiFactory {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val mockyApi : StarWarsApi = retrofit()
+    val apiaryApi : StarWarsApi = retrofit()
         .create(StarWarsApi::class.java)
 
 }

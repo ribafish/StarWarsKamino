@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Star Wars Kamino</string>
+    <string name="name">Name</string>
+    <string name="rotation_period">Rotational Period</string>
+    <string name="orbital_period">Orbital Period</string>
+    <string name="diameter">Diameter</string>
+    <string name="climate">Climate</string>
+    <string name="gravity">Gravity</string>
+    <string name="terrain">Terrain</string>
+    <string name="surface_water">Water Surface</string>
+    <string name="population">Population</string>
+    <string name="residents">Residents</string>
+    <string name="unknown">Unknown</string>
+    <string name="planet_name_default">Planet Name</string>
+    <string name="show_residents">Show Residents</string>
 </resources>

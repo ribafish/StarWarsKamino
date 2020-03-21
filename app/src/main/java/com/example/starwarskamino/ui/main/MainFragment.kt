@@ -5,8 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.starwarskamino.databinding.MainFragmentBinding
+import com.example.starwarskamino.general.Result
+import com.squareup.picasso.Picasso
 
 class MainFragment : Fragment() {
 
@@ -34,7 +38,35 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, MainViewModelFactory).get(MainViewModel::class.java)
-        // TODO: Use the ViewModel
+        viewModel.getKamino(false).observe(viewLifecycleOwner, Observer { result ->
+            when(result) {
+                is Result.Loading -> {
+                    binding.swipeRefresh.isRefreshing = true
+                }
+                is Result.Success -> {
+                    binding.swipeRefresh.isRefreshing = false
+
+                    binding.name.text = result.data.name
+                    binding.population.text = result.data.population
+                    binding.climate.text = result.data.climate
+                    binding.gravity.text = result.data.gravity
+                    binding.terrain.text = result.data.terrain
+                    binding.diameter.text = result.data.diameter
+                    binding.surfaceWater.text = result.data.surfaceWater
+                    binding.rotationPeriod.text = result.data.rotationPeriod
+                    binding.orbitalPeriod.text = result.data.orbitalPeriod
+                    Picasso.get().load(result.data.imageUrl).into(binding.thumb)
+                }
+                is Result.Error -> {
+                    binding.swipeRefresh.isRefreshing = false
+                    Toast.makeText(this.context, result.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.getKamino(true)
+        }
     }
 
 }
