@@ -25,4 +25,5 @@
     <string name="eye_color">Eye color:</string>
     <string name="no_image_available">No image available</string>
     <string name="resident_details">Resident details</string>
+    <string name="description_zoom_touch_close">Touch to close</string>
 </resources>
