@@ -32,7 +32,7 @@ class ResidentsAdapter (private val listenerId:OnIdClickListener) : RecyclerView
     inner class ResidentViewHolder(private val binding : ResidentItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(residentId: String) {
             binding.residentId.text = residentId
-            binding.root.setOnClickListener{ v -> listenerId.onClick(residentId)}
+            binding.root.setOnClickListener{ _ -> listenerId.onClick(residentId)}
         }
     }
 

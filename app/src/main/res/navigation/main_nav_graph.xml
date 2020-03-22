@@ -22,5 +22,17 @@
         <argument
             android:name="residentUrlList"
             app:argType="string[]" />
+        <action
+            android:id="@+id/action_residentListFragment_to_residentDetailsFragment"
+            app:destination="@id/residentDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/residentDetailsFragment"
+        android:name="com.example.starwarskamino.ui.residentDetails.ResidentDetailsFragment"
+        android:label="@string/resident_details"
+        tools:layout="@layout/resident_details_fragment">
+        <argument
+            android:name="residentId"
+            app:argType="string" />
     </fragment>
 </navigation>

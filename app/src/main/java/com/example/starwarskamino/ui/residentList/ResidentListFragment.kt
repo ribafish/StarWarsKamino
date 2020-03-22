@@ -9,6 +9,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 
@@ -51,7 +52,8 @@ class ResidentListFragment : Fragment() {
 
         viewAdapter = ResidentsAdapter(object : OnIdClickListener {
             override fun onClick(id: String) {
-                TODO("Go to resident details screen")
+                val action = ResidentListFragmentDirections.actionResidentListFragmentToResidentDetailsFragment(id)
+                findNavController().navigate(action)
             }
         })
         binding.recyclerView.adapter = viewAdapter
