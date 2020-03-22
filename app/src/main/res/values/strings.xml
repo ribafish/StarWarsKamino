@@ -14,7 +14,7 @@
     <string name="planet_name_default">Planet Name</string>
     <string name="show_residents">Show Residents</string>
     <string name="no_residents_data">No residents data</string>
-    <string name="resident_id">Resident Id:</string>
+    <string name="resident_id">Resident %1$s</string>
     <string name="mass">Mass:</string>
     <string name="height">Height:</string>
     <string name="resident_image">Resident image</string>

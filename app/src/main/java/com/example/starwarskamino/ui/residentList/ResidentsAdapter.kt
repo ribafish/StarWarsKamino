@@ -3,6 +3,7 @@ package com.example.starwarskamino.ui.residentList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.starwarskamino.R
 import com.example.starwarskamino.databinding.ResidentItemBinding
 
 class ResidentsAdapter (private val listenerId:OnIdClickListener) : RecyclerView.Adapter<ResidentsAdapter.ResidentViewHolder>() {
@@ -31,7 +32,7 @@ class ResidentsAdapter (private val listenerId:OnIdClickListener) : RecyclerView
 
     inner class ResidentViewHolder(private val binding : ResidentItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(residentId: String) {
-            binding.residentId.text = residentId
+            binding.residentId.text = binding.residentId.context.getString(R.string.resident_id, residentId)
             binding.root.setOnClickListener{ _ -> listenerId.onClick(residentId)}
         }
     }
