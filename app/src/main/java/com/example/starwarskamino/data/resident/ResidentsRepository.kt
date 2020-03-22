@@ -9,6 +9,7 @@ import com.example.starwarskamino.general.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.TestOnly
 import java.lang.Exception
 import java.net.UnknownHostException
 
@@ -25,6 +26,10 @@ class ResidentsRepository private constructor(private val api: StarWarsApi, priv
                 instance = ResidentsRepository(api, contextProvider)
             }
             return instance as ResidentsRepository
+        }
+        @TestOnly
+        fun destroyInstance() {
+            instance = null
         }
     }
 

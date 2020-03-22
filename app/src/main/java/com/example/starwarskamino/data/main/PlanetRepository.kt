@@ -11,12 +11,13 @@ import com.example.starwarskamino.general.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.TestOnly
 import java.lang.Exception
 import java.net.UnknownHostException
 
 class PlanetRepository private constructor(private val api:StarWarsApi, private val contextProvider: CoroutineContextProvider) {
 
-    // Make the PlanetRepository a singleton, so that the last result and data is cached.
+    // Make the PlanetRepository a singleton, so that the last result and data is cached. This would be better solved using Room
     companion object {
         private var instance:PlanetRepository? = null
         fun getInstance(api: StarWarsApi, contextProvider: CoroutineContextProvider):PlanetRepository {
@@ -24,6 +25,10 @@ class PlanetRepository private constructor(private val api:StarWarsApi, private 
                 instance = PlanetRepository(api, contextProvider)
             }
             return instance as PlanetRepository
+        }
+        @TestOnly
+        fun destroyInstance() {
+            instance = null
         }
     }
 
