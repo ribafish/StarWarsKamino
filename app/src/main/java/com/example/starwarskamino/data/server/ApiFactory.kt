@@ -14,7 +14,7 @@ object ApiFactory {
     private val logger = run {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.apply {
-            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.HEADERS
+            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         }
     }
     private val client = OkHttpClient().newBuilder().addInterceptor(logger).build()

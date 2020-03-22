@@ -26,4 +26,6 @@
     <string name="no_image_available">No image available</string>
     <string name="resident_details">Resident details</string>
     <string name="description_zoom_touch_close">Touch to close</string>
+    <string name="like">Like</string>
+    <string name="likes">Likes: %1$d</string>
 </resources>

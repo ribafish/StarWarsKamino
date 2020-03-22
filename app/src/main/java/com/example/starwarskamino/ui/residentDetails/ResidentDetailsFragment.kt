@@ -50,26 +50,29 @@ class ResidentDetailsFragment : Fragment() {
         binding.noImgAvailable.visibility = View.VISIBLE
 
         viewModel.getResident(args.residentId).observe(viewLifecycleOwner, Observer { residentResponse ->
+            if (_binding == null) return@Observer   // guard against getting updates when we exit the screen
             when (residentResponse) {
                 is Result.Success -> {
                     val r = residentResponse.data
-                    _binding?.name?.text = r.name
-                    _binding?.height?.text = r.height
-                    _binding?.mass?.text = r.mass
-                    _binding?.gender?.text = r.gender
-                    _binding?.birthYear?.text = r.birthYear
-                    _binding?.hairColor?.text = r.hairColor
-                    _binding?.skinColor?.text = r.skinColor
-                    _binding?.eyeColor?.text = r.eyeColor
-                    Picasso.get().load(r.imageUrl).into(_binding?.image, object: Callback{
+                    binding.name.text = r.name
+                    binding.height.text = r.height
+                    binding.mass.text = r.mass
+                    binding.gender.text = r.gender
+                    binding.birthYear.text = r.birthYear
+                    binding.hairColor.text = r.hairColor
+                    binding.skinColor.text = r.skinColor
+                    binding.eyeColor.text = r.eyeColor
+                    Picasso.get().load(r.imageUrl).into(binding.image, object: Callback{
                         override fun onSuccess() {
-                            _binding?.image?.visibility = View.VISIBLE
-                            _binding?.noImgAvailable?.visibility = View.GONE
+                            if (_binding == null) return // guard against getting updates when we exit the screen
+                            binding.image.visibility = View.VISIBLE
+                            binding.noImgAvailable.visibility = View.GONE
                         }
 
                         override fun onError(e: Exception?) {
-                            _binding?.image?.visibility = View.GONE
-                            _binding?.noImgAvailable?.visibility = View.VISIBLE
+                            if (_binding == null) return // guard against getting updates when we exit the screen
+                            binding.image.visibility = View.GONE
+                            binding.noImgAvailable.visibility = View.VISIBLE
                         }
 
                     })

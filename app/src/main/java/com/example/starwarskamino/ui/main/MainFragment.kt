@@ -4,6 +4,9 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.RectF
@@ -18,11 +21,14 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.example.starwarskamino.R
 import com.example.starwarskamino.databinding.MainFragmentBinding
 import com.example.starwarskamino.general.Result
+import com.google.android.material.button.MaterialButton
 import com.squareup.picasso.Picasso
 
 class MainFragment : Fragment() {
+    private val PREFERENCES_LIKED = "PREFERENCES_LIKED"
 
     private var _binding: MainFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
@@ -35,6 +41,8 @@ class MainFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
 
     private var residentList : List<String>? = null
+
+    private var liked : Boolean = false
 
     // Hold a reference to the current animator,
     // so that it can be canceled mid-way.
@@ -58,8 +66,11 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        liked = activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean(PREFERENCES_LIKED, false) == true
+
         viewModel = ViewModelProvider(this, MainViewModelFactory).get(MainViewModel::class.java)
         viewModel.getKamino().observe(viewLifecycleOwner, Observer { result ->
+            if (_binding == null) return@Observer   // guard against getting updates when we exit the screen
             when(result) {
                 is Result.Loading -> {
                     binding.swipeRefresh.isRefreshing = true
@@ -78,14 +89,32 @@ class MainFragment : Fragment() {
                     binding.orbitalPeriod.text = result.data.orbitalPeriod
                     Picasso.get().load(result.data.imageUrl).into(binding.thumb)
 
-
                     residentList = result.data.residents
 
                     binding.textButton.visibility = View.VISIBLE
+                    if (liked) {
+                        displayLikes(result.data.likes)
+                    } else {
+                        hideLikes()
+                        binding.likeIcon.setOnClickListener { onLikeClick() }
+                        binding.likeText.setOnClickListener { onLikeClick() }
+                    }
                 }
                 is Result.Error -> {
                     binding.swipeRefresh.isRefreshing = false
                     Toast.makeText(this.context, result.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
+        viewModel.getLikeKamino().observe(viewLifecycleOwner, Observer {
+            if (_binding == null) return@Observer   // guard against getting updates when we exit the screen
+            when (it) {
+                is Result.Success -> {
+                    displayLikes(it.data.likes)
+                }
+                is Result.Error -> {
+                    Toast.makeText(this.context, "Error liking: ${it.error}", Toast.LENGTH_SHORT).show()
                 }
             }
         })
@@ -104,7 +133,27 @@ class MainFragment : Fragment() {
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
         binding.thumb.setOnClickListener { zoomImageFromThumb(binding.thumb) }
+    }
 
+    private fun onLikeClick() {
+        viewModel.likeKamino()
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putBoolean(PREFERENCES_LIKED, true)
+            commit()
+        }
+    }
+
+    private fun hideLikes() {
+        binding.likeText.text = getString(R.string.like)
+        binding.likeIcon.setImageResource(R.drawable.favorite_border)
+    }
+
+    private fun displayLikes(likes:Int?) {
+        binding.likeText.text = getString(R.string.likes, likes)
+        binding.likeIcon.setImageResource(R.drawable.favorite)
+        binding.likeIcon.isClickable = false
+        binding.likeText.isClickable = false
     }
 
     private fun zoomImageFromThumb(thumbView: ImageView) {
