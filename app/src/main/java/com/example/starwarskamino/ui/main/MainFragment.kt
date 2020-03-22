@@ -30,6 +30,7 @@ import com.squareup.picasso.Picasso
 class MainFragment : Fragment() {
     private val PREFERENCES_LIKED = "PREFERENCES_LIKED"
 
+    // ViewBinding variable
     private var _binding: MainFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -42,6 +43,7 @@ class MainFragment : Fragment() {
 
     private var residentList : List<String>? = null
 
+    // Has the user already liked this planet
     private var liked : Boolean = false
 
     // Hold a reference to the current animator,
@@ -66,9 +68,12 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        // Check SharedPreferences if the user has already liked the planet
         liked = activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean(PREFERENCES_LIKED, false) == true
 
+        // get the viewModel using a factory
         viewModel = ViewModelProvider(this, MainViewModelFactory).get(MainViewModel::class.java)
+        // get the planet data and observe the returned result
         viewModel.getKamino().observe(viewLifecycleOwner, Observer { result ->
             if (_binding == null) return@Observer   // guard against getting updates when we exit the screen
             when(result) {
@@ -91,10 +96,13 @@ class MainFragment : Fragment() {
 
                     residentList = result.data.residents
 
-                    binding.textButton.visibility = View.VISIBLE
+                    binding.showResidentsButton.visibility = View.VISIBLE
+
+                    // if the user has already liked the planet, display number of likes
                     if (liked) {
                         displayLikes(result.data.likes)
                     } else {
+                        // else display the like button and set up the listeners
                         hideLikes()
                         binding.likeIcon.setOnClickListener { onLikeClick() }
                         binding.likeText.setOnClickListener { onLikeClick() }
@@ -107,11 +115,20 @@ class MainFragment : Fragment() {
             }
         })
 
+        // Observe the result from liking the planet.
         viewModel.getLikeKamino().observe(viewLifecycleOwner, Observer {
             if (_binding == null) return@Observer   // guard against getting updates when we exit the screen
             when (it) {
                 is Result.Success -> {
                     displayLikes(it.data.likes)
+                    // Persist that the user has liked the planet only when we get a confirmation from the network
+                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                    if (sharedPref != null) {
+                        with(sharedPref.edit()) {
+                            putBoolean(PREFERENCES_LIKED, true)
+                            commit()
+                        }
+                    }
                 }
                 is Result.Error -> {
                     Toast.makeText(this.context, "Error liking: ${it.error}", Toast.LENGTH_SHORT).show()
@@ -123,8 +140,10 @@ class MainFragment : Fragment() {
             viewModel.getKamino()
         }
 
-        binding.textButton.visibility = View.GONE
-        binding.textButton.setOnClickListener{ v ->
+        // Hide the showResidentsButton by default -> make it visible when we get the planet data
+        binding.showResidentsButton.visibility = View.GONE
+        binding.showResidentsButton.setOnClickListener{ v ->
+            // Navigate to the ResidentListFragment using navController and safeArgs
             val action = MainFragmentDirections.actionMainFragmentToResidentListFragment(residentList?.toTypedArray() ?: emptyArray())
             v.findNavController().navigate(action)
         }
@@ -135,20 +154,26 @@ class MainFragment : Fragment() {
         binding.thumb.setOnClickListener { zoomImageFromThumb(binding.thumb) }
     }
 
+    /**
+     * Function to call when the like button is clicked
+     * It will issue a network request to like the planet.
+     */
     private fun onLikeClick() {
         viewModel.likeKamino()
-        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
-        with (sharedPref.edit()) {
-            putBoolean(PREFERENCES_LIKED, true)
-            commit()
-        }
     }
 
+    /**
+     * Hide the likes on the planet and display the like button
+     */
     private fun hideLikes() {
         binding.likeText.text = getString(R.string.like)
         binding.likeIcon.setImageResource(R.drawable.favorite_border)
     }
 
+    /**
+     * Display the likes on the planet and hide the like button
+     * @param likes nullable int holding the amount of likes the planet has
+     */
     private fun displayLikes(likes:Int?) {
         binding.likeText.text = getString(R.string.likes, likes)
         binding.likeIcon.setImageResource(R.drawable.favorite)
@@ -156,6 +181,10 @@ class MainFragment : Fragment() {
         binding.likeText.isClickable = false
     }
 
+    /**
+     * Zoom the set thumb to fullscreen.
+     * @param thumbView imageView to zoom to fullscreen
+     */
     private fun zoomImageFromThumb(thumbView: ImageView) {
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.

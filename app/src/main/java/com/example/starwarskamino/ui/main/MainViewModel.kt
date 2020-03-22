@@ -15,8 +15,11 @@ class MainViewModel(private val planetRepository : PlanetRepository) : ViewModel
     fun likeKamino() = planetRepository.likePlanet(viewModelScope, 10)
 }
 
+/**
+ * Helper ViewModel Factory to instantiate a ViewModel with constructor parameters
+ */
 object MainViewModelFactory : ViewModelProvider.Factory {
-    private val planetRepository = PlanetRepository.getInstance(ApiFactory.apiaryApi, CoroutineContextProvider())
+    private val planetRepository = PlanetRepository.getInstance(ApiFactory.api, CoroutineContextProvider())
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")

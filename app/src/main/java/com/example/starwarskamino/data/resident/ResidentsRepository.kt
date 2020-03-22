@@ -16,8 +16,8 @@ class ResidentsRepository private constructor(private val api: StarWarsApi, priv
     private val result : MutableLiveData<Result<ResidentResponse>> = MutableLiveData(Result.Loading)
     // Cached data
     private val residents : MutableLiveData<HashMap<String,ResidentResponse>> = MutableLiveData(HashMap())
-    val cachedResidentsLiveData : LiveData<HashMap<String,ResidentResponse>> = residents
 
+    // Singleton, so that we can cache the data as the user is moving between screens
     companion object {
         private var instance:ResidentsRepository? = null
         fun getInstance(api: StarWarsApi, contextProvider: CoroutineContextProvider):ResidentsRepository {
@@ -28,6 +28,12 @@ class ResidentsRepository private constructor(private val api: StarWarsApi, priv
         }
     }
 
+    /**
+     * Starts the get resident details request and returns the LiveData with result
+     * @param scope coroutine scope, which is used to start the coroutine
+     * @param id id of the resident to get the data for
+     * @return LiveData holding the result of the request
+     */
     fun getResident(scope: CoroutineScope, id:String, refresh: Boolean): LiveData<Result<ResidentResponse>> {
         val found:Boolean = residents.value?.containsKey(id) ?: false
         if (!found || refresh) {
@@ -43,19 +49,24 @@ class ResidentsRepository private constructor(private val api: StarWarsApi, priv
         return result
     }
 
+    /**
+     * Helper coroutine function to get the resident
+     * @param id id of the resident to get the data for
+     */
     private suspend fun getResident(id:String) {
         try {
+            // Emit the loading state
+            emitResult(Result.Loading)
+            // Issue the request - blocking the coroutine until it finishes.
             val response = api.getResident(id)
             if (response.isSuccessful) {
-                if (response.body() != null) {
-                    val residentResponse = response.body()!!
-                    emitResult(Result.Success(residentResponse))   // We've checked that body isn't null
+                response.body()?.let { residentResponse ->
+                    emitResult(Result.Success(residentResponse))
+                    // cache the residentResponse using the main thread
                     withContext(contextProvider.Main) {
                         residents.value?.set(id, residentResponse)
                     }
-                } else {
-                    emitResult(Result.Error("Network call returned empty"))
-                }
+                } ?: emitResult(Result.Error("Network call returned empty"))
             } else {
                 emitResult(Result.Error(response.errorBody().toString()))
             }

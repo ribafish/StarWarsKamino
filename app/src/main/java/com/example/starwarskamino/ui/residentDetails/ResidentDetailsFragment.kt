@@ -27,12 +27,12 @@ class ResidentDetailsFragment : Fragment() {
     }
 
     private lateinit var viewModel: ResidentDetailsViewModel
-    val args : ResidentDetailsFragmentArgs by navArgs()
+    // Get the safeArgs using navArgs helper
+    private val args : ResidentDetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?): View? {
         _binding = ResidentDetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }

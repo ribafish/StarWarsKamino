@@ -16,6 +16,7 @@ import java.net.UnknownHostException
 
 class PlanetRepository private constructor(private val api:StarWarsApi, private val contextProvider: CoroutineContextProvider) {
 
+    // Make the PlanetRepository a singleton, so that the last result and data is cached.
     companion object {
         private var instance:PlanetRepository? = null
         fun getInstance(api: StarWarsApi, contextProvider: CoroutineContextProvider):PlanetRepository {
@@ -30,20 +31,31 @@ class PlanetRepository private constructor(private val api:StarWarsApi, private 
     private val resultPlanet : MutableLiveData<Result<PlanetResponse>> = MutableLiveData(Result.Loading)
     private val resultLike : MutableLiveData<Result<LikeResponse>> = MutableLiveData(Result.Loading)
 
+    /**
+     * Returns the LiveData holding the result of like request
+     * @return LiveData holding the result of like request
+     */
     fun getResultLike() : LiveData<Result<LikeResponse>> = resultLike
 
+    /**
+     * Starts the get planet data and returns LiveData holding the result of get planet data request
+     * @param scope coroutine scope, which is used to start the coroutine
+     * @param planetId id of the planet to get the data for
+     * @return LiveData holding the result of get planet data request
+     */
     fun getPlanet(scope: CoroutineScope, planetId:Int) : LiveData<Result<PlanetResponse>> {
         scope.launch {
+            // Change context to IO
             withContext(contextProvider.IO) {
                 try {
-                    val response = api.getPlanet(planetId.toString())
+                    // Emit the loading state
                     emitResultPlanet(Result.Loading)
+                    // Issue the request - blocking the coroutine until it finishes
+                    val response = api.getPlanet(planetId.toString())
                     if (response.isSuccessful) {
-                        if (response.body() != null) {
-                            emitResultPlanet(Result.Success(response.body()!!))   // We've checked that body isn't null
-                        } else {
-                            emitResultPlanet(Result.Error("Network call returned empty"))
-                        }
+                        response.body()?.let {
+                            emitResultPlanet(Result.Success(it))
+                        } ?: emitResultPlanet(Result.Error("Network call returned empty"))
                     } else {
                         emitResultPlanet(Result.Error(response.errorBody().toString()))
                     }
@@ -57,18 +69,24 @@ class PlanetRepository private constructor(private val api:StarWarsApi, private 
         return resultPlanet
     }
 
+    /**
+     * Starts the request to like tha planet
+     * @param scope coroutine scope, which is used to start the coroutine
+     * @param planetId id of the planet to get the data for
+     * @return LiveData holding the result of like request
+     */
     fun likePlanet(scope: CoroutineScope, planetId:Int) : LiveData<Result<LikeResponse>>  {
         scope.launch {
             withContext(contextProvider.IO) {
                 try {
-                    val response = api.likePlanet(planetId.toString(), LikeRequest(planetId))
+                    // Emit the loading state
                     emitResultLike(Result.Loading)
+                    // Issue the request - blocking the coroutine until it finishes.
+                    val response = api.likePlanet(planetId.toString(), LikeRequest(planetId))
                     if (response.isSuccessful) {
-                        if (response.body() != null) {
-                            emitResultLike(Result.Success(response.body()!!))   // We've checked that body isn't null
-                        } else {
-                            emitResultLike(Result.Error("Network call returned empty"))
-                        }
+                        response.body()?.let {
+                            emitResultLike(Result.Success(it))
+                        } ?: emitResultLike(Result.Error("Network call returned empty"))
                     } else {
                         emitResultLike(Result.Error(response.errorBody().toString()))
                     }
@@ -86,6 +104,7 @@ class PlanetRepository private constructor(private val api:StarWarsApi, private 
 
     /**
      * Helper function for emitting the Result via the main thread
+     * @param result PlanetResponse result to assign to MutableLiveData on the main thread
      */
     private suspend fun emitResultPlanet(result: Result<PlanetResponse>) {
         withContext(contextProvider.Main) {
@@ -93,6 +112,10 @@ class PlanetRepository private constructor(private val api:StarWarsApi, private 
         }
     }
 
+    /**
+     * Helper function for emitting the Result via the main thread
+     * @param result LikeResponse result to assign to MutableLiveData on the main thread
+     */
     private suspend fun emitResultLike(result: Result<LikeResponse>) {
         withContext(contextProvider.Main) {
             this@PlanetRepository.resultLike.value = result

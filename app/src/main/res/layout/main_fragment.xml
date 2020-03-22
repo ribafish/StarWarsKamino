@@ -272,7 +272,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <Button
-        android:id="@+id/textButton"
+        android:id="@+id/showResidentsButton"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

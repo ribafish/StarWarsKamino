@@ -11,7 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
- * The Apiary StarWars Kamino interface that describes the http actions available
+ * The StarWars Kamino interface that describes the http actions available
  */
 interface StarWarsApi {
 

@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
- * A factory that generates the reotrofit object used to connect to the mocky server
+ * A factory that generates the retrofit object used to connect to the mocky server
  */
 object ApiFactory {
     const val baseUrl = "https://private-anon-f3af761773-starwars2.apiary-mock.com/"
@@ -25,7 +25,7 @@ object ApiFactory {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val apiaryApi : StarWarsApi = retrofit()
+    val api : StarWarsApi = retrofit()
         .create(StarWarsApi::class.java)
 
 }

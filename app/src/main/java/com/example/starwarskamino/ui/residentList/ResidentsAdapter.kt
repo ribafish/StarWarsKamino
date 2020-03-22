@@ -29,8 +29,15 @@ class ResidentsAdapter (private val listenerId:OnIdClickListener) : RecyclerView
         holder.bind(residentIds[position])
     }
 
-
+    /**
+     * ViewHolder as an inner class to get access of parent class values
+     * @param binding ViewBinding of the inflated view to populate
+     */
     inner class ResidentViewHolder(private val binding : ResidentItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        /**
+         * Helper function to bind the view to the data to be displayed
+         * @param residentId id of the resident
+         */
         fun bind(residentId: String) {
             binding.residentId.text = binding.residentId.context.getString(R.string.resident_id, residentId)
             binding.root.setOnClickListener{ _ -> listenerId.onClick(residentId)}

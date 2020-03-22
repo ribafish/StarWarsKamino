@@ -11,8 +11,11 @@ class ResidentDetailsViewModel(private val residentsRepository: ResidentsReposit
     fun getResident(id:String) = residentsRepository.getResident(viewModelScope, id, false)
 }
 
+/**
+ * Helper ViewModel Factory to instantiate a ViewModel with constructor parameters
+ */
 object ResidentListViewModelFactory : ViewModelProvider.Factory {
-    private val residentsRepository = ResidentsRepository.getInstance(ApiFactory.apiaryApi, CoroutineContextProvider())
+    private val residentsRepository = ResidentsRepository.getInstance(ApiFactory.api, CoroutineContextProvider())
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")

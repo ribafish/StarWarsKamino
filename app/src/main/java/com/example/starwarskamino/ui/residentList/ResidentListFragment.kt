@@ -18,6 +18,7 @@ import com.example.starwarskamino.ui.residentList.ResidentsAdapter.OnIdClickList
 
 class ResidentListFragment : Fragment() {
 
+    // ViewBinding variable
     private var _binding: ResidentListFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -29,7 +30,8 @@ class ResidentListFragment : Fragment() {
     private lateinit var viewModel: ResidentListViewModel
     private lateinit var viewAdapter: ResidentsAdapter
 
-    val args : ResidentListFragmentArgs by navArgs()
+    // Get the safeArgs using navArgs helper
+    private val args : ResidentListFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,11 +49,13 @@ class ResidentListFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, ResidentListViewModelFactory).get(ResidentListViewModel::class.java)
 
+        // Show the noResidentsData text if we get an empty list
         binding.noResidentsData.visibility = if (args.residentUrlList.isEmpty()) VISIBLE else GONE
         viewModel.setResidentUrls(args.residentUrlList)
 
         viewAdapter = ResidentsAdapter(object : OnIdClickListener {
             override fun onClick(id: String) {
+                // On resident click, naviagate to ResidentDetailsFragment using navController with safeArgs
                 val action = ResidentListFragmentDirections.actionResidentListFragmentToResidentDetailsFragment(id)
                 findNavController().navigate(action)
             }
