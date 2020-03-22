@@ -9,7 +9,7 @@ import com.example.starwarskamino.general.CoroutineContextProvider
 
 class MainViewModel(private val planetRepository : PlanetRepository) : ViewModel() {
 
-    fun getKamino(forceRefresh : Boolean) = planetRepository.getKaminoPlanet(viewModelScope, forceRefresh)
+    fun getKamino() = planetRepository.getKaminoPlanet(viewModelScope)
 }
 
 object MainViewModelFactory : ViewModelProvider.Factory {

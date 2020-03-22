@@ -41,7 +41,7 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, MainViewModelFactory).get(MainViewModel::class.java)
-        viewModel.getKamino(false).observe(viewLifecycleOwner, Observer { result ->
+        viewModel.getKamino().observe(viewLifecycleOwner, Observer { result ->
             when(result) {
                 is Result.Loading -> {
                     binding.swipeRefresh.isRefreshing = true
@@ -72,7 +72,7 @@ class MainFragment : Fragment() {
         })
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.getKamino(true)
+            viewModel.getKamino()
         }
 
         binding.textButton.visibility = View.GONE

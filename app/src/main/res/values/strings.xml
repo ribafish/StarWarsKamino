@@ -13,4 +13,6 @@
     <string name="unknown">Unknown</string>
     <string name="planet_name_default">Planet Name</string>
     <string name="show_residents">Show Residents</string>
+    <string name="no_residents_data">No residents data</string>
+    <string name="resident_id">Resident Id:</string>
 </resources>

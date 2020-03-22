@@ -14,8 +14,6 @@ import java.net.UnknownHostException
 
 class PlanetRepository(private val api:StarWarsApi, private val contextProvider: CoroutineContextProvider) {
     private val result : MutableLiveData<Result<PlanetResponse>> = MutableLiveData()
-    // Cached data
-    private var kamino : PlanetResponse? = null
 
     /**
      * Helper function for emitting the Result via the main thread
@@ -26,31 +24,27 @@ class PlanetRepository(private val api:StarWarsApi, private val contextProvider:
         }
     }
 
-    fun getKaminoPlanet(scope: CoroutineScope, forceRefresh: Boolean) : LiveData<Result<PlanetResponse>> {
-        if (kamino == null || forceRefresh) {
-            result.value = Result.Loading
-            scope.launch {
-                withContext(contextProvider.IO) {
-                    try {
-                        val response = api.getPlanet("10")
-                        if (response.isSuccessful) {
-                            if (response.body() != null) {
-                                emitResult(Result.Success(response.body()!!))   // We've checked that body isn't null
-                            } else {
-                                emitResult(Result.Error("Network call returned empty"))
-                            }
+    fun getKaminoPlanet(scope: CoroutineScope) : LiveData<Result<PlanetResponse>> {
+        result.value = Result.Loading
+        scope.launch {
+            withContext(contextProvider.IO) {
+                try {
+                    val response = api.getPlanet("10")
+                    if (response.isSuccessful) {
+                        if (response.body() != null) {
+                            emitResult(Result.Success(response.body()!!))   // We've checked that body isn't null
                         } else {
-                            emitResult(Result.Error(response.errorBody().toString()))
+                            emitResult(Result.Error("Network call returned empty"))
                         }
-                    } catch (e : UnknownHostException) {
-                        emitResult(Result.Error("Can't connect to host. Check internet connectivity"))
-                    } catch (e : Exception) {
-                        emitResult(Result.Error(e.toString()))
+                    } else {
+                        emitResult(Result.Error(response.errorBody().toString()))
                     }
+                } catch (e : UnknownHostException) {
+                    emitResult(Result.Error("Can't connect to host. Check internet connectivity"))
+                } catch (e : Exception) {
+                    emitResult(Result.Error(e.toString()))
                 }
             }
-        } else {
-            result.value = Result.Success(kamino!!)
         }
         return result
     }

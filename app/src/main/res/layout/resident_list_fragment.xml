@@ -5,10 +5,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.residentList.ResidentListFragment">
 
-    <TextView
-        android:id="@+id/text"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:orientation="vertical"/>
+
+    <TextView
+        android:id="@+id/noResidentsData"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_residents_data" />
 
 </FrameLayout>
