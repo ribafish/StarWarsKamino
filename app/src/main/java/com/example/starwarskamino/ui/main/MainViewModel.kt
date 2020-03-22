@@ -13,7 +13,7 @@ class MainViewModel(private val planetRepository : PlanetRepository) : ViewModel
 }
 
 object MainViewModelFactory : ViewModelProvider.Factory {
-    private val planetRepository = PlanetRepository(ApiFactory.apiaryApi, CoroutineContextProvider())
+    private val planetRepository = PlanetRepository.getInstance(ApiFactory.apiaryApi, CoroutineContextProvider())
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")

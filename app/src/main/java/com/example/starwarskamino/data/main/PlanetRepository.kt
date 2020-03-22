@@ -12,24 +12,28 @@ import kotlinx.coroutines.withContext
 import java.lang.Exception
 import java.net.UnknownHostException
 
-class PlanetRepository(private val api:StarWarsApi, private val contextProvider: CoroutineContextProvider) {
-    private val result : MutableLiveData<Result<PlanetResponse>> = MutableLiveData()
+class PlanetRepository private constructor(private val api:StarWarsApi, private val contextProvider: CoroutineContextProvider) {
 
-    /**
-     * Helper function for emitting the Result via the main thread
-     */
-    private suspend fun emitResult(result: Result<PlanetResponse>) {
-        withContext(contextProvider.Main) {
-            this@PlanetRepository.result.value = result
+    companion object {
+        private var instance:PlanetRepository? = null
+        fun getInstance(api: StarWarsApi, contextProvider: CoroutineContextProvider):PlanetRepository {
+            if (instance == null) {
+                instance = PlanetRepository(api, contextProvider)
+            }
+            return instance as PlanetRepository
         }
     }
 
+
+    private val result : MutableLiveData<Result<PlanetResponse>> = MutableLiveData(Result.Loading)
+
+
     fun getKaminoPlanet(scope: CoroutineScope) : LiveData<Result<PlanetResponse>> {
-        result.value = Result.Loading
         scope.launch {
             withContext(contextProvider.IO) {
                 try {
                     val response = api.getPlanet("10")
+                    emitResult(Result.Loading)
                     if (response.isSuccessful) {
                         if (response.body() != null) {
                             emitResult(Result.Success(response.body()!!))   // We've checked that body isn't null
@@ -47,5 +51,15 @@ class PlanetRepository(private val api:StarWarsApi, private val contextProvider:
             }
         }
         return result
+    }
+
+
+    /**
+     * Helper function for emitting the Result via the main thread
+     */
+    private suspend fun emitResult(result: Result<PlanetResponse>) {
+        withContext(contextProvider.Main) {
+            this@PlanetRepository.result.value = result
+        }
     }
 }
