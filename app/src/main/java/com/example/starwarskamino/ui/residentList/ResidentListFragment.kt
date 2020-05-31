@@ -1,7 +1,6 @@
 package com.example.starwarskamino.ui.residentList
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -14,19 +13,19 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.example.starwarskamino.databinding.ResidentListFragmentBinding
+import com.example.starwarskamino.general.injectViewModel
 import com.example.starwarskamino.ui.residentList.ResidentsAdapter.OnIdClickListener
+import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
-class ResidentListFragment : Fragment() {
+class ResidentListFragment : DaggerFragment() {
 
     // ViewBinding variable
     private var _binding: ResidentListFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
-    companion object {
-        fun newInstance() = ResidentListFragment()
-    }
-
+    @Inject lateinit var modelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: ResidentListViewModel
     private lateinit var viewAdapter: ResidentsAdapter
 
@@ -36,6 +35,7 @@ class ResidentListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
+        viewModel = injectViewModel(modelFactory)
         _binding = ResidentListFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -47,7 +47,6 @@ class ResidentListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, ResidentListViewModelFactory).get(ResidentListViewModel::class.java)
 
         // Show the noResidentsData text if we get an empty list
         binding.noResidentsData.visibility = if (args.residentUrlList.isEmpty()) VISIBLE else GONE

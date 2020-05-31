@@ -12,26 +12,14 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.TestOnly
 import java.lang.Exception
 import java.net.UnknownHostException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ResidentsRepository private constructor(private val api: StarWarsApi, private val contextProvider: CoroutineContextProvider) {
+@Singleton
+class ResidentsRepository @Inject constructor(private val api: StarWarsApi, private val contextProvider: CoroutineContextProvider) {
     private val result : MutableLiveData<Result<ResidentResponse>> = MutableLiveData(Result.Loading)
     // Cached data
     private val residents : MutableLiveData<HashMap<String,ResidentResponse>> = MutableLiveData(HashMap())
-
-    // Singleton, so that we can cache the data as the user is moving between screens
-    companion object {
-        private var instance:ResidentsRepository? = null
-        fun getInstance(api: StarWarsApi, contextProvider: CoroutineContextProvider):ResidentsRepository {
-            if (instance == null) {
-                instance = ResidentsRepository(api, contextProvider)
-            }
-            return instance as ResidentsRepository
-        }
-        @TestOnly
-        fun destroyInstance() {
-            instance = null
-        }
-    }
 
     /**
      * Starts the get resident details request and returns the LiveData with result

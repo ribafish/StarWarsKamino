@@ -1,31 +1,29 @@
 package com.example.starwarskamino.ui.residentDetails
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.RenderProcessGoneDetail
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 
 import com.example.starwarskamino.general.Result
 import com.example.starwarskamino.databinding.ResidentDetailsFragmentBinding
+import com.example.starwarskamino.general.injectViewModel
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import dagger.android.support.DaggerFragment
 import java.lang.Exception
+import javax.inject.Inject
 
-class ResidentDetailsFragment : Fragment() {
+class ResidentDetailsFragment : DaggerFragment() {
 
     private var _binding: ResidentDetailsFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
-    companion object {
-        fun newInstance() = ResidentDetailsFragment()
-    }
-
+    @Inject lateinit var modelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: ResidentDetailsViewModel
     // Get the safeArgs using navArgs helper
     private val args : ResidentDetailsFragmentArgs by navArgs()
@@ -33,6 +31,7 @@ class ResidentDetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
+        viewModel = injectViewModel(modelFactory)
         _binding = ResidentDetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -44,7 +43,6 @@ class ResidentDetailsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, ResidentListViewModelFactory).get(ResidentDetailsViewModel::class.java)
 
         binding.image.visibility = View.GONE
         binding.noImgAvailable.visibility = View.VISIBLE

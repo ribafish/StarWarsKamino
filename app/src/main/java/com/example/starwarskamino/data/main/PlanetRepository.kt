@@ -12,10 +12,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.TestOnly
+import timber.log.Timber
 import java.lang.Exception
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class PlanetRepository private constructor(private val api:StarWarsApi, private val contextProvider: CoroutineContextProvider) {
+class PlanetRepository @Inject constructor(private val api:StarWarsApi, private val contextProvider: CoroutineContextProvider) {
 
     // Make the PlanetRepository a singleton, so that the last result and data is cached. This would be better solved using Room
     companion object {
@@ -62,7 +64,8 @@ class PlanetRepository private constructor(private val api:StarWarsApi, private 
                             emitResultPlanet(Result.Success(it))
                         } ?: emitResultPlanet(Result.Error("Network call returned empty"))
                     } else {
-                        emitResultPlanet(Result.Error(response.errorBody().toString()))
+                        val msg = response.errorBody()?.string()
+                        emitResultPlanet(Result.Error("Error ${response.code()}: $msg"))
                     }
                 } catch (e : UnknownHostException) {
                     emitResultPlanet(Result.Error("Can't connect to host. Check internet connectivity"))

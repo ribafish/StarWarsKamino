@@ -5,13 +5,10 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,10 +21,12 @@ import androidx.navigation.findNavController
 import com.example.starwarskamino.R
 import com.example.starwarskamino.databinding.MainFragmentBinding
 import com.example.starwarskamino.general.Result
-import com.google.android.material.button.MaterialButton
+import com.example.starwarskamino.general.injectViewModel
 import com.squareup.picasso.Picasso
+import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
-class MainFragment : Fragment() {
+class MainFragment : DaggerFragment() {
     private val PREFERENCES_LIKED = "PREFERENCES_LIKED"
 
     // ViewBinding variable
@@ -35,10 +34,8 @@ class MainFragment : Fragment() {
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
-    companion object {
-        fun newInstance() = MainFragment()
-    }
-
+    @Inject
+    lateinit var modelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: MainViewModel
 
     private var residentList : List<String>? = null
@@ -57,6 +54,7 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
+        viewModel = injectViewModel(modelFactory)
         _binding = MainFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -71,8 +69,6 @@ class MainFragment : Fragment() {
         // Check SharedPreferences if the user has already liked the planet
         liked = activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean(PREFERENCES_LIKED, false) == true
 
-        // get the viewModel using a factory
-        viewModel = ViewModelProvider(this, MainViewModelFactory).get(MainViewModel::class.java)
         // get the planet data and observe the returned result
         viewModel.getKamino().observe(viewLifecycleOwner, Observer { result ->
             if (_binding == null) return@Observer   // guard against getting updates when we exit the screen

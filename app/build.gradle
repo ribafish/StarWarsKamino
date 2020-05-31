@@ -6,7 +6,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.example.starwarskamino"
         minSdkVersion 21
@@ -14,7 +14,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "BASE_API_URL", "\"https://private-anon-f3af761773-starwars2.apiary-mock.com/\""
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -66,9 +69,12 @@ dependencies {
         exclude group: "com.android.support"
     }
 
-    def dagger_version = "2.27"
-    implementation "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    def daggerVersion = "2.27"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger-android:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
 
     testImplementation 'junit:junit:4.13'
     testImplementation "androidx.arch.core:core-testing:2.1.0"

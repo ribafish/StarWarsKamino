@@ -1,10 +1,11 @@
 package com.example.starwarskamino
 
-import android.app.Application
+import com.example.starwarskamino.di.DaggerAppComponent
 import com.example.starwarskamino.general.DebugTree
+import dagger.android.DaggerApplication
 import timber.log.Timber
 
-class App : Application() {
+class App : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()
@@ -14,4 +15,8 @@ class App : Application() {
             Timber.plant(DebugTree())
         }
     }
+
+    private val applicationInjector = DaggerAppComponent.factory().create(this)
+
+    override fun applicationInjector() = applicationInjector
 }

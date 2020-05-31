@@ -7,10 +7,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.starwarskamino.databinding.MainActivityBinding
-import com.example.starwarskamino.databinding.MainFragmentBinding
-import com.example.starwarskamino.ui.main.MainFragment
+import dagger.android.support.DaggerAppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DaggerAppCompatActivity() {
 
     private lateinit var binding: MainActivityBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
