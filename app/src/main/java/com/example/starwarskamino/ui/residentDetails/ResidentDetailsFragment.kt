@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 
 import com.example.starwarskamino.general.Result
 import com.example.starwarskamino.databinding.ResidentDetailsFragmentBinding
+import com.example.starwarskamino.di.FragmentScope
 import com.example.starwarskamino.general.injectViewModel
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -17,6 +18,7 @@ import dagger.android.support.DaggerFragment
 import java.lang.Exception
 import javax.inject.Inject
 
+@FragmentScope
 class ResidentDetailsFragment : DaggerFragment() {
 
     private var _binding: ResidentDetailsFragmentBinding? = null
@@ -46,6 +48,11 @@ class ResidentDetailsFragment : DaggerFragment() {
 
         binding.image.visibility = View.GONE
         binding.noImgAvailable.visibility = View.VISIBLE
+
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         viewModel.getResident(args.residentId).observe(viewLifecycleOwner, Observer { residentResponse ->
             if (_binding == null) return@Observer   // guard against getting updates when we exit the screen
@@ -77,7 +84,6 @@ class ResidentDetailsFragment : DaggerFragment() {
                 }
             }
         })
-
     }
 
 }

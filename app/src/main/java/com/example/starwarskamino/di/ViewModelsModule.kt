@@ -25,7 +25,6 @@ abstract class ViewModelsModule {
     @ViewModelKey(ResidentListViewModel::class)
     abstract fun bindesResidentListViewModel(vm: ResidentListViewModel): ViewModel
 
-    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(ResidentDetailsViewModel::class)

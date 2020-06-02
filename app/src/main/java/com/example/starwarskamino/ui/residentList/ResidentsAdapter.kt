@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.starwarskamino.R
 import com.example.starwarskamino.databinding.ResidentItemBinding
+import timber.log.Timber
 
 class ResidentsAdapter (private val listenerId:OnIdClickListener) : RecyclerView.Adapter<ResidentsAdapter.ResidentViewHolder>() {
 

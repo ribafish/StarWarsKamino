@@ -15,7 +15,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "BASE_API_URL", "\"https://private-anon-f3af761773-starwars2.apiary-mock.com/\""
+        buildConfigField "String", "BASE_API_URL", "\"https://my-json-server.typicode.com/ribafish/StarWarsKaminoJson/\""
     }
 
     buildTypes {

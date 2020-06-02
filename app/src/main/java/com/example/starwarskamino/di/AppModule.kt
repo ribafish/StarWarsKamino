@@ -1,7 +1,6 @@
 package com.example.starwarskamino.di
 
 import com.example.starwarskamino.BuildConfig
-import com.example.starwarskamino.data.server.ApiFactory
 import com.example.starwarskamino.data.server.StarWarsApi
 import dagger.Module
 import dagger.Provides
@@ -11,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@Module(includes = [ViewModelsModule::class])
+@Module
 class AppModule {
 
     @Provides

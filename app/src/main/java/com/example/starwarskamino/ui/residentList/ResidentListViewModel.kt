@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.example.starwarskamino.data.resident.ResidentsRepository
 import com.example.starwarskamino.data.resident.response.ResidentResponse
 import com.example.starwarskamino.general.Result
+import timber.log.Timber
 import javax.inject.Inject
 
 class ResidentListViewModel @Inject constructor(private val residentsRepository: ResidentsRepository) : ViewModel() {
@@ -28,5 +29,6 @@ class ResidentListViewModel @Inject constructor(private val residentsRepository:
      */
     fun setResidentUrls(urls:Array<String>) {
         residentIds.value = urls.toList().map{it.trim().removeSuffix("/").substringAfterLast("/")}
+        Timber.d("setResidentUrls: IDs: ${residentIds.value}")
     }
 }

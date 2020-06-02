@@ -16,6 +16,7 @@ import com.example.starwarskamino.databinding.ResidentListFragmentBinding
 import com.example.starwarskamino.general.injectViewModel
 import com.example.starwarskamino.ui.residentList.ResidentsAdapter.OnIdClickListener
 import dagger.android.support.DaggerFragment
+import timber.log.Timber
 import javax.inject.Inject
 
 class ResidentListFragment : DaggerFragment() {
@@ -54,6 +55,7 @@ class ResidentListFragment : DaggerFragment() {
 
         viewAdapter = ResidentsAdapter(object : OnIdClickListener {
             override fun onClick(id: String) {
+                Timber.d("Clicked on $id")
                 // On resident click, naviagate to ResidentDetailsFragment using navController with safeArgs
                 val action = ResidentListFragmentDirections.actionResidentListFragmentToResidentDetailsFragment(id)
                 findNavController().navigate(action)
